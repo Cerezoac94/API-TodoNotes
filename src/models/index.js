@@ -36,6 +36,7 @@ Subject.belongsToMany(Course, {
 	foreignKey: 'idSubject',
 });
 
+// Resource subject
 Resource.belongsTo(Subject, {
 	foreignKey: 'idSubject',
 	onDelete: 'CASCADE',

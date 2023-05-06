@@ -117,7 +117,7 @@ class RoleController {
 			if (!id)
 				throw new CustomError(
 					'Entrada no válida',
-					'No permitido eliminar sin especificar id',
+					'No esta permitido eliminar sin especificar id',
 					400
 				);
 			const role = await Role.destroy({

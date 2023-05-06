@@ -15,11 +15,13 @@ User.init(
 		},
 		email: {
 			type: Dt.STRING,
+			allowNull: false,
+			unique: true,
 		},
 		phone: {
 			type: Dt.STRING(15),
 		},
-		intitutionalId: {
+		institutionalId: {
 			type: Dt.STRING(100),
 		},
 		password: {
