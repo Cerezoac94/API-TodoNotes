@@ -5,7 +5,7 @@ class RoleController {
 	static async getAllRoles(req, res, next) {
 		try {
 			const roles = await Role.findAll({
-				attributes: ['name'],
+				attributes: ['id', 'name'],
 			});
 			if (!roles.length)
 				throw new CustomError(

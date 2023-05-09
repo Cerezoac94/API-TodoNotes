@@ -1,4 +1,4 @@
-import { Role, User } from '../../models/index.js';
+import { Course, Role, User } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
 import institutionalId from '../../utils/institutionalId.js';
 
@@ -48,7 +48,14 @@ class UserController {
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
 			const user = await User.findByPk(id, {
 				attributes: { exclude: ['password', 'salt', 'idRole'] },
-				include: { model: Role, attributes: ['name'] },
+				include: [
+					{ model: Role, attributes: ['name'] },
+					{
+						model: Course,
+						attributes: ['id', 'name'],
+						through: { attributes: [] },
+					},
+				],
 			});
 			if (!user)
 				throw new CustomError(
@@ -72,7 +79,7 @@ class UserController {
 			if (!firstName || !lastName || !email || !password)
 				throw new CustomError(
 					'Entrada no válida',
-					'Hay campos necesarios vacíos',
+					'Hay campos necesarios que están vacíos',
 					400
 				);
 
@@ -148,13 +155,12 @@ class UserController {
 	static async deleteUser(req, res, next) {
 		try {
 			const { id } = req.params;
-			if (!id) {
+			if (!id)
 				throw new CustomError(
 					'Entrada no válida',
 					'No esta permitido eliminar sin especificar id',
 					400
 				);
-			}
 			const user = await User.destroy({
 				where: { id },
 			});
