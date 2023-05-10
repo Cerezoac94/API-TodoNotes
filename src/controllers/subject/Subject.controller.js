@@ -79,7 +79,35 @@ class SubjectController {
 
 	static async updateSubject(req, res, next) {
 		try {
-			res.status(202).send('Update subject');
+			const { id } = req.params;
+			if (!id)
+				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
+			const { name, description } = req.body;
+			if (!name)
+				throw new CustomError(
+					'Entrada no válida',
+					'El nombre de la materia no puede estar vacío',
+					400
+				);
+			const subject = await Subject.update(
+				{
+					name,
+					description,
+				},
+				{
+					where: { id },
+				}
+			);
+			if (!subject[0])
+				throw new CustomError(
+					'Error en la actualización de la materia',
+					`No se actualizó ninguna materia con el id: ${id}`,
+					400
+				);
+			res.status(202).send({
+				success: true,
+				message: 'Materia actualizada con éxito',
+			});
 		} catch (err) {
 			next(err);
 		}
@@ -87,7 +115,26 @@ class SubjectController {
 
 	static async deleteSubject(req, res, next) {
 		try {
-			res.status(202).send('Delete subject');
+			const { id } = req.params;
+			if (!id)
+				throw new CustomError(
+					'Entrada no válida',
+					'No esta permitido eliminar sin especificar id',
+					400
+				);
+			const subject = await Subject.destroy({
+				where: { id },
+			});
+			if (!subject)
+				throw new CustomError(
+					'Error en la eliminación de la materia',
+					`No se eliminó ninguna materia con el id: ${id}`,
+					400
+				);
+			res.status(202).send({
+				success: true,
+				message: 'Materia eliminada con éxito',
+			});
 		} catch (err) {
 			next(err);
 		}
