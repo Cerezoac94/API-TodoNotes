@@ -1,4 +1,4 @@
-import { Course, Role, User } from '../../models/index.js';
+import { Course, Role, User, UserCourse } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
 import institutionalId from '../../utils/institutionalId.js';
 
@@ -65,7 +65,7 @@ class UserController {
 				);
 			res.status(200).send({
 				success: true,
-				message: 'User',
+				message: 'Usuario',
 				results: user,
 			});
 		} catch (err) {
@@ -141,7 +141,7 @@ class UserController {
 				throw new CustomError(
 					'Error en la actualización del usuario',
 					`No se actualizó ningún usuario con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -168,7 +168,7 @@ class UserController {
 				throw new CustomError(
 					'Error en la eliminación del usuario',
 					`No se eliminó ningún usuario con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -177,6 +177,19 @@ class UserController {
 		} catch (err) {
 			next(err);
 		}
+	}
+
+	static async assignUserToCourse(req, res, next) {
+		try {
+			const { idCourse } = req.params;
+
+			const userToCourse = await UserCourse.create({
+				// idUser,
+				// idCourse
+			});
+			// usuario elegirá al curso que se inscribirá
+			// Validar que el usuario, no esté en un curso de la misma fecha u horario
+		} catch (err) {}
 	}
 }
 

@@ -18,7 +18,6 @@ Resource.init(
 		},
 		idSubject: {
 			type: Dt.INTEGER,
-			allowNull: false,
 		},
 	},
 	{

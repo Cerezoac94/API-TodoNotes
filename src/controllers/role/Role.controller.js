@@ -100,7 +100,7 @@ class RoleController {
 				throw new CustomError(
 					'Error en la actualización del rol',
 					`No se actualizó ningún rol con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -127,7 +127,7 @@ class RoleController {
 				throw new CustomError(
 					'Error en la eliminación del rol',
 					`No se eliminó ningún rol con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,

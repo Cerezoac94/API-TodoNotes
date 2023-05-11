@@ -116,7 +116,7 @@ class CourseController {
 				throw new CustomError(
 					'Error en la actualización del curso',
 					`No se actualizó ningún curso con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -143,7 +143,7 @@ class CourseController {
 				throw new CustomError(
 					'Error en la eliminación del curso',
 					`No se eliminó ningún curso con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -152,6 +152,12 @@ class CourseController {
 		} catch (err) {
 			next(err);
 		}
+	}
+	static async addSubjectToCourse(req, res, next) {
+		try {
+			// admin asignará materias al curso
+			// Validar que no esté repetida la materia
+		} catch (err) {}
 	}
 }
 

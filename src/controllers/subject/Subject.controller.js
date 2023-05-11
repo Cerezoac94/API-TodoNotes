@@ -102,7 +102,7 @@ class SubjectController {
 				throw new CustomError(
 					'Error en la actualización de la materia',
 					`No se actualizó ninguna materia con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,
@@ -129,7 +129,7 @@ class SubjectController {
 				throw new CustomError(
 					'Error en la eliminación de la materia',
 					`No se eliminó ninguna materia con el id: ${id}`,
-					400
+					404
 				);
 			res.status(202).send({
 				success: true,

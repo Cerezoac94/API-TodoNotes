@@ -46,4 +46,4 @@ Subject.hasMany(Resource, {
 	foreignKey: 'idSubject',
 });
 
-export { Subject, Course, Role, Resource, User };
+export { Subject, Course, Role, Resource, User, UserCourse, SubjectCourse };
