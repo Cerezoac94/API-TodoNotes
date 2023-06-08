@@ -1,23 +1,20 @@
 import { DataTypes as Dt, Model } from 'sequelize';
 import conn from '../../db/db.js';
 
-class Role extends Model {}
+class Status extends Model {}
 
-Role.init(
+Status.init(
 	{
-		name: {
+		status: {
 			type: Dt.STRING(50),
 			allowNull: false,
-		},
-		description: {
-			type: Dt.STRING(100),
 		},
 	},
 	{
 		sequelize: conn,
-		modelName: 'Role',
+		modelName: 'Status',
 		timestamps: false,
 	}
 );
 
-export default Role;
+export default Status;

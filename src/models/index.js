@@ -1,49 +1,79 @@
-import Subject from './subject/Subject.model.js';
-import Course from './course/Course.model.js';
-import Role from './role/Role.model.js';
+import Category from './category/Category.model.js';
 import Resource from './resource/Resource.model.js';
+import Topic from './topic/Topic.model.js';
 import User from './user/User.model.js';
-import UserCourse from './userCourse/UserCourse.model.js';
-import SubjectCourse from './subjectCourse/SubjectCourse.model.js';
+import TopicCategory from './topicCategory/TopicCategory.model.js';
+import Notes from './notes/Notes.model.js';
+import Status from './status/Status.model.js';
+import ResourceType from './resourceType/ResourceType.model.js';
 
-User.belongsTo(Role, {
-	foreignKey: 'idRole',
-	onDelete: 'RESTRICT',
+// Category - User.
+Category.belongsTo(User, {
+	foreignKey: 'idUser',
+	onDelete: 'CASCADE',
+	onUpdate: 'CASCADE',
 });
-
-Role.hasMany(User, {
-	foreignKey: 'idRole',
-});
-// User_Course
-User.belongsToMany(Course, {
-	through: UserCourse,
+User.hasMany(Category, {
 	foreignKey: 'idUser',
 });
 
-Course.belongsToMany(User, {
-	through: UserCourse,
-	foreignKey: 'idCourse',
+// Category - Topic, intermedia TopicCategory".
+Category.belongsToMany(Topic, {
+	through: TopicCategory,
+	foreignKey: 'idCategory',
+});
+Topic.belongsToMany(Category, {
+	through: TopicCategory,
+	foreignKey: 'idTopic',
 });
 
-// Subject_Course
-Course.belongsToMany(Subject, {
-	through: SubjectCourse,
-	foreignKey: 'idCourse',
+// Topic - status
+Topic.belongsTo(Status, {
+	foreignKey: 'idStatus',
+	onDelete: 'RESTRICT',
+	onUpdate: 'CASCADE',
+});
+Status.hasMany(Topic, {
+	foreignKey: 'idStatus',
 });
 
-Subject.belongsToMany(Course, {
-	through: SubjectCourse,
-	foreignKey: 'idSubject',
+// Resource - Topic
+Resource.belongsTo(Topic, {
+	foreignKey: 'idTopic',
+	onDelete: 'SET NULL',
+	onUpdate: 'CASCADE',
+});
+Topic.hasMany(Resource, {
+	foreignKey: 'idTopic',
 });
 
-// Resource subject
-Resource.belongsTo(Subject, {
-	foreignKey: 'idSubject',
+// Notes - Topic
+Notes.belongsTo(Topic, {
+	foreignKey: 'idTopic',
 	onDelete: 'CASCADE',
+	onUpdate: 'CASCADE',
+});
+Topic.hasMany(Notes, {
+	foreignKey: 'idTopic',
 });
 
-Subject.hasMany(Resource, {
-	foreignKey: 'idSubject',
+//Resource - ResourceType
+Resource.belongsTo(ResourceType, {
+	foreignKey: 'idResourceType',
+	onDelete: 'RESTRICT',
+	onUpdate: 'CASCADE',
+});
+ResourceType.hasMany(Resource, {
+	foreignKey: 'idResourceType',
 });
 
-export { Subject, Course, Role, Resource, User, UserCourse, SubjectCourse };
+export {
+	Category,
+	Resource,
+	Topic,
+	User,
+	TopicCategory,
+	Notes,
+	Status,
+	ResourceType,
+};

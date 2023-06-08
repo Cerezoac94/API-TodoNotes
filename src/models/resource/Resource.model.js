@@ -5,7 +5,7 @@ class Resource extends Model {}
 
 Resource.init(
 	{
-		type: {
+		title: {
 			type: Dt.STRING(30),
 			allowNull: false,
 		},
@@ -16,7 +16,11 @@ Resource.init(
 			type: Dt.TEXT,
 			allowNull: false,
 		},
-		idSubject: {
+		idResourceType: {
+			type: Dt.INTEGER,
+			allowNull: false,
+		},
+		idTopic: {
 			type: Dt.INTEGER,
 		},
 	},

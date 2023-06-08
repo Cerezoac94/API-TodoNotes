@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import ResourceController from '../../controllers/resource/Resource.controller.js';
 
-const resourceRoute = Router();
+const resourceRoutes = Router();
 
-resourceRoute.get('/', ResourceController.getAllResources);
-resourceRoute.get('/:id', ResourceController.getResourceById);
-resourceRoute.post('/', ResourceController.createResource);
-resourceRoute.put('/:id', ResourceController.updateResource);
-resourceRoute.delete('/:id', ResourceController.deleteResource);
+resourceRoutes.get('/', ResourceController.getAllResources);
+resourceRoutes.get('/:id', ResourceController.getResourceById);
+resourceRoutes.post('/:idTopic', ResourceController.createResource);
+resourceRoutes.put('/:id', ResourceController.updateResource);
+resourceRoutes.delete('/:id', ResourceController.deleteResource);
 
-export default resourceRoute;
+export default resourceRoutes;

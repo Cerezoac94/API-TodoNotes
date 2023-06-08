@@ -5,24 +5,23 @@ class User extends Model {}
 
 User.init(
 	{
-		firstName: {
-			type: Dt.STRING(30),
-			allowNull: false,
-		},
-		lastName: {
-			type: Dt.STRING(30),
-			allowNull: false,
-		},
-		email: {
-			type: Dt.STRING,
+		userName: {
+			type: Dt.STRING(120),
 			allowNull: false,
 			unique: true,
 		},
-		phone: {
-			type: Dt.STRING(15),
-		},
-		institutionalId: {
+		firstName: {
 			type: Dt.STRING(100),
+			allowNull: false,
+		},
+		lastName: {
+			type: Dt.STRING(100),
+			allowNull: false,
+		},
+		email: {
+			type: Dt.STRING(120),
+			allowNull: false,
+			unique: true,
 		},
 		password: {
 			type: Dt.TEXT,
@@ -30,9 +29,6 @@ User.init(
 		},
 		salt: {
 			type: Dt.STRING,
-		},
-		idRole: {
-			type: Dt.INTEGER,
 		},
 	},
 	{

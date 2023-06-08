@@ -1,4 +1,3 @@
-import { Subject } from '../../models/index.js';
 import { Resource } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
 
@@ -6,8 +5,8 @@ class ResourceController {
 	static async getAllResources(req, res, next) {
 		try {
 			const resources = await Resource.findAll({
-				attributes: { exclude: ['idSubject'] },
-				include: { model: Subject, attributes: ['id', 'name'] },
+				// traer todos los campos, excepto idTopic y idResourcetype
+				// where idTopic = idTopic
 			});
 			if (!resources.length)
 				throw new CustomError(
@@ -30,8 +29,7 @@ class ResourceController {
 			if (!id)
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
 			const resource = await Resource.findByPk(id, {
-				attributes: { exclude: ['idSubject'] },
-				include: { model: Subject, attributes: ['id', 'name'] },
+				// todos los campos, includes idResourceType y idTopic
 			});
 			if (!resource)
 				throw new CustomError(
@@ -50,18 +48,21 @@ class ResourceController {
 	}
 	static async createResource(req, res, next) {
 		try {
-			const { type, description, url, idSubject } = req.body;
-			if (!type)
+			// idTopic probablemente vendrá del params
+			const { idTopic } = req.params;
+			const { title, description, url, idResourceType } = req.body;
+			if (!title || url || idResourceType)
 				throw new CustomError(
 					'Entrada no válida',
-					'El tipo de recurso no puede estar vacío',
+					'Hay campos necesarios que están vacíos',
 					400
 				);
 			const resource = await Resource.create({
-				type,
+				title,
 				description,
 				url,
-				idSubject,
+				idResourceType,
+				idTopic,
 			});
 			if (!resource)
 				throw new CustomError(
@@ -82,19 +83,20 @@ class ResourceController {
 			const { id } = req.params;
 			if (!id)
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
-			const { type, description, url, idSubject } = req.body;
-			if (!type)
+			const { title, description, url, idResourceType, idTopic } = req.body;
+			if (!title || url || idResourceType)
 				throw new CustomError(
 					'Entrada no válida',
-					'El tipo de recurso no puede estar vacío',
+					'Hay campos necesarios que están vacíos',
 					400
 				);
 			const resource = await Resource.update(
 				{
-					type,
+					title,
 					description,
 					url,
-					idSubject,
+					idResourceType,
+					idTopic,
 				},
 				{
 					where: { id },
@@ -104,7 +106,7 @@ class ResourceController {
 				throw new CustomError(
 					'Error en la actualización del recurso',
 					`No se actualizó ningún recurso con el id: ${id}`,
-					404
+					400
 				);
 			res.status(202).send({
 				success: true,

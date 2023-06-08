@@ -1,29 +1,31 @@
 import { DataTypes as Dt, Model } from 'sequelize';
 import conn from '../../db/db.js';
 
-class Course extends Model {}
-
-Course.init(
+class Topic extends Model {}
+Topic.init(
 	{
 		name: {
 			type: Dt.STRING(100),
 			allowNull: false,
 		},
-		schedule: {
-			type: Dt.STRING(25),
+		description: {
+			type: Dt.TEXT,
 		},
-		startDate: {
+		creationDate: {
 			type: Dt.DATEONLY,
 		},
-		endDate: {
-			type: Dt.DATEONLY,
+		image: {
+			type: Dt.TEXT,
+		},
+		idStatus: {
+			type: Dt.INTEGER,
 		},
 	},
 	{
 		sequelize: conn,
-		modelName: 'Course',
+		modelName: 'Topic',
 		timestamps: false,
 	}
 );
 
-export default Course;
+export default Topic;

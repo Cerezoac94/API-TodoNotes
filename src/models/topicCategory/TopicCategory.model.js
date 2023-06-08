@@ -1,21 +1,24 @@
 import { DataTypes as Dt, Model } from 'sequelize';
 import conn from '../../db/db.js';
 
-class SubjectCourse extends Model {}
+class TopicCategory extends Model {}
 
-SubjectCourse.init(
+TopicCategory.init(
 	{
-		idSubject: {
+		idTopic: {
 			type: Dt.INTEGER,
+			allowNull: false,
 		},
-		idCourse: {
+		idCategory: {
 			type: Dt.INTEGER,
+			allowNull: false,
 		},
 	},
 	{
 		sequelize: conn,
-		modelName: 'Subject_Course',
+		modelName: 'Topic_Category',
 		timestamps: false,
 	}
 );
-export default SubjectCourse;
+
+export default TopicCategory;

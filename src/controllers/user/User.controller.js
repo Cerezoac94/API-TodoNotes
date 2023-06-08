@@ -1,39 +1,23 @@
-import { Course, Role, User, UserCourse } from '../../models/index.js';
+import { User } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
-import institutionalId from '../../utils/institutionalId.js';
 
 class UserController {
 	static async getAllUsers(req, res, next) {
 		try {
-			// mediante la ruta, enviaré el param del rol a buscar, usando este mismo controlador, al buscar por students, enviaré como value el param students, y para teachers, param teacher
-			const { role } = req.params;
-			if (!role)
-				throw new CustomError(
-					'Entrada no válida',
-					'Busqueda de usuario incorrecta',
-					400
-				);
-			const typeRole = {
-				students: 3,
-				teachers: 2,
-			};
 			const users = await User.findAll({
-				attributes: ['id', 'firstName', 'lastName', 'email', 'institutionalId'],
-				where: {
-					idRole: typeRole[role],
-				},
+				attributes: ['id', 'userName', 'firstName', 'lastName'],
 			});
 
 			if (!users.length)
 				throw new CustomError(
 					'Error en la consulta',
-					'No existe ningún estudiante',
+					'No existe ningún usuario',
 					404
 				);
 
 			res.status(200).send({
 				success: true,
-				message: 'Users',
+				message: 'Usuarios',
 				results: users,
 			});
 		} catch (err) {
@@ -45,17 +29,10 @@ class UserController {
 		try {
 			const { id } = req.params;
 			if (!id)
+				//captura de error, por si cambiase la ruta, con la ruta actual, no es problema si no se envía un id, pues entra a la ruta de "getAll"
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
 			const user = await User.findByPk(id, {
-				attributes: { exclude: ['password', 'salt', 'idRole'] },
-				include: [
-					{ model: Role, attributes: ['name'] },
-					{
-						model: Course,
-						attributes: ['id', 'name'],
-						through: { attributes: [] },
-					},
-				],
+				attributes: { exclude: ['password', 'salt'] },
 			});
 			if (!user)
 				throw new CustomError(
@@ -75,8 +52,8 @@ class UserController {
 
 	static async createUser(req, res, next) {
 		try {
-			const { firstName, lastName, email, password, idRole = 3 } = req.body;
-			if (!firstName || !lastName || !email || !password)
+			const { userName, firstName, lastName, email, password } = req.body;
+			if (!userName || !firstName || !lastName || !email || !password)
 				throw new CustomError(
 					'Entrada no válida',
 					'Hay campos necesarios que están vacíos',
@@ -84,11 +61,11 @@ class UserController {
 				);
 
 			const user = await User.create({
+				userName,
 				firstName,
 				lastName,
 				email,
 				password,
-				idRole,
 			});
 
 			if (!user)
@@ -97,12 +74,6 @@ class UserController {
 					'Algo salió mal, no se pudo crear el usuario',
 					500
 				);
-
-			await user.update({
-				institutionalId: institutionalId(user.id, user.idRole),
-			});
-			//TODO: Capturar error para matricula
-
 			res.status(201).send({
 				success: true,
 				message: 'Usuario creado con éxito',
@@ -115,23 +86,23 @@ class UserController {
 	static async updateUser(req, res, next) {
 		try {
 			const { id } = req.params;
-			const { firstName, lastName, email, phone } = req.body;
+			const { userName, firstName, lastName, email } = req.body;
 			if (!id) {
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
 			}
-			if (!firstName || !lastName || !email) {
+			if (!userName || !firstName || !lastName || !email) {
 				throw new CustomError(
 					'Entrada no válida',
-					'Hay campos necesarios vacíos',
+					'Hay campos necesarios que están vacíos',
 					400
 				);
 			}
 			const user = await User.update(
 				{
+					userName,
 					firstName,
 					lastName,
 					email,
-					phone,
 				},
 				{
 					where: { id },
@@ -141,7 +112,7 @@ class UserController {
 				throw new CustomError(
 					'Error en la actualización del usuario',
 					`No se actualizó ningún usuario con el id: ${id}`,
-					404
+					400
 				);
 			res.status(202).send({
 				success: true,
@@ -177,19 +148,6 @@ class UserController {
 		} catch (err) {
 			next(err);
 		}
-	}
-
-	static async assignUserToCourse(req, res, next) {
-		try {
-			const { idCourse } = req.params;
-
-			const userToCourse = await UserCourse.create({
-				// idUser,
-				// idCourse
-			});
-			// usuario elegirá al curso que se inscribirá
-			// Validar que el usuario, no esté en un curso de la misma fecha u horario
-		} catch (err) {}
 	}
 }
 
