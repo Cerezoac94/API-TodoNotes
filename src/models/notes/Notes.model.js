@@ -7,9 +7,11 @@ Notes.init(
 	{
 		title: {
 			type: Dt.STRING,
+			allowNull: false,
 		},
 		text: {
 			type: Dt.TEXT,
+			allowNull: false,
 		},
 		image: {
 			type: Dt.TEXT,

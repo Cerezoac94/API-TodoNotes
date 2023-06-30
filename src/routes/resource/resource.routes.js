@@ -3,8 +3,8 @@ import ResourceController from '../../controllers/resource/Resource.controller.j
 
 const resourceRoutes = Router();
 
-resourceRoutes.get('/', ResourceController.getAllResources);
-resourceRoutes.get('/:id', ResourceController.getResourceById);
+resourceRoutes.get('/:idTopic', ResourceController.getAllResources);
+resourceRoutes.get('/id/:id', ResourceController.getResourceById);
 resourceRoutes.post('/:idTopic', ResourceController.createResource);
 resourceRoutes.put('/:id', ResourceController.updateResource);
 resourceRoutes.delete('/:id', ResourceController.deleteResource);

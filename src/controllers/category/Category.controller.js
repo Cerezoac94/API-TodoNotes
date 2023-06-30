@@ -10,8 +10,12 @@ import CustomError from '../../utils/CustomError.js';
 class CategoryController {
 	static async getAllCategories(req, res, next) {
 		try {
+			const { idUser } = req.params;
 			const categories = await Category.findAll({
 				attributes: ['id', 'name'],
+				where: {
+					idUser,
+				},
 			});
 			if (!categories.length)
 				throw new CustomError(

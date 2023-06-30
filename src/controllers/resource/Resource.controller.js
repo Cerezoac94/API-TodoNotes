@@ -1,12 +1,15 @@
-import { Resource } from '../../models/index.js';
+import { Resource, ResourceType } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
 
 class ResourceController {
 	static async getAllResources(req, res, next) {
 		try {
+			const { idTopic } = req.params;
 			const resources = await Resource.findAll({
-				// traer todos los campos, excepto idTopic y idResourcetype
-				// where idTopic = idTopic
+				attributes: ['id', 'title'],
+				where: {
+					idTopic,
+				},
 			});
 			if (!resources.length)
 				throw new CustomError(
@@ -29,7 +32,11 @@ class ResourceController {
 			if (!id)
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
 			const resource = await Resource.findByPk(id, {
-				// todos los campos, includes idResourceType y idTopic
+				attributes: { exclude: ['idTopic', 'idResourceType'] },
+				include: {
+					model: ResourceType,
+					attributes: ['type', 'image'],
+				},
 			});
 			if (!resource)
 				throw new CustomError(
@@ -48,10 +55,9 @@ class ResourceController {
 	}
 	static async createResource(req, res, next) {
 		try {
-			// idTopic probablemente vendrá del params
 			const { idTopic } = req.params;
 			const { title, description, url, idResourceType } = req.body;
-			if (!title || url || idResourceType)
+			if (!title || !url || !idResourceType)
 				throw new CustomError(
 					'Entrada no válida',
 					'Hay campos necesarios que están vacíos',
@@ -83,8 +89,8 @@ class ResourceController {
 			const { id } = req.params;
 			if (!id)
 				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
-			const { title, description, url, idResourceType, idTopic } = req.body;
-			if (!title || url || idResourceType)
+			const { title, description, url } = req.body;
+			if (!title || !url)
 				throw new CustomError(
 					'Entrada no válida',
 					'Hay campos necesarios que están vacíos',
@@ -95,8 +101,6 @@ class ResourceController {
 					title,
 					description,
 					url,
-					idResourceType,
-					idTopic,
 				},
 				{
 					where: { id },

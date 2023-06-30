@@ -67,6 +67,26 @@ ResourceType.hasMany(Resource, {
 	foreignKey: 'idResourceType',
 });
 
+// Status - User
+Status.belongsTo(User, {
+	foreignKey: 'idUser',
+	onDelete: 'CASCADE',
+	onUpdate: 'CASCADE',
+});
+User.hasMany(Status, {
+	foreignKey: 'idUser',
+});
+
+// ResourceType - User
+ResourceType.belongsTo(User, {
+	foreignKey: 'idUser',
+	onDelete: 'CASCADE',
+	onUpdate: 'CASCADE',
+});
+User.hasMany(ResourceType, {
+	foreignKey: 'idUser',
+});
+
 export {
 	Category,
 	Resource,

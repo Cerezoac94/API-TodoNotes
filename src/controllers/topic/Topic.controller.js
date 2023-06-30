@@ -1,22 +1,28 @@
-import { Topic } from '../../models/index.js';
+import { Category, Topic, TopicCategory } from '../../models/index.js';
 import CustomError from '../../utils/CustomError.js';
 
 class TopicController {
 	static async getAllTopics(req, res, next) {
 		try {
-			// where id(/me) = idUser(model category)  para solo buscar los topicos de cada usuario
-			const topics = await Topic.findAll();
+			const { idUser } = req.params;
+			const topics = await Topic.findAll({
+				attributes: ['id', 'name'],
+				include: {
+					model: Category,
+					through: { attributes: [] },
+					attributes: ['name'],
+					where: { idUser },
+				},
+			});
 			if (!topics.length)
 				throw new CustomError(
 					'Error en la consulta',
-					'No existe ningún tópico',
+					'No existe ningun tópico',
 					404
 				);
-			res.status(200).send({
-				success: true,
-				message: 'Topics',
-				results: topics,
-			});
+			res
+				.status(200)
+				.send({ success: true, message: 'Tópicos', result: topics });
 		} catch (err) {
 			next(err);
 		}
@@ -26,11 +32,15 @@ class TopicController {
 		try {
 			const { id } = req.params;
 			if (!id)
-				throw new CustomError('Entrada no válida', 'Id no especificado', 400);
-			const topic = await Topic.findByPk(
-				id
-				//
-			);
+				throw new CustomError('Entrada no válida', 'Id no especificado', 400); //error atajado por si hay cambio de ruta
+			const topic = await Topic.findByPk(id, {
+				// se accederá a las notas con endpoint getAllNotes
+				// include: {
+				// 	model: Notes,
+				// 	attributes: ['id', 'title'],
+				// },
+				attributes: ['id', 'name', 'idStatus'],
+			});
 			if (!topic)
 				throw new CustomError(
 					'Error en la consulta',
@@ -49,18 +59,17 @@ class TopicController {
 
 	static async createTopic(req, res, next) {
 		try {
-			const { name, description, image, idStatus } = req.body;
-			if (!name)
+			const { name, description, image, idStatus, idCategory } = req.body;
+			if (!name || !idCategory)
 				throw new CustomError(
 					'Entrada no válida',
-					'El nombre del tópico no puede estar vacío',
+					'Hay campos necesarios que están vacíos',
 					400
 				);
-
 			const topic = await Topic.create({
 				name,
 				description,
-				// creationDate: new Date(),
+				creationDate: new Date(),
 				image,
 				idStatus,
 			});
@@ -70,10 +79,77 @@ class TopicController {
 					'Algo salió mal, no se pudo crear el tópico',
 					500
 				);
+			let topicCategory = null;
+			if (idCategory.isArray) {
+				topicCategory = await TopicCategory.create({
+					idCategory,
+					idTopic: topic.id,
+				});
+				if (!topicCategory)
+					throw new CustomError(
+						'Error en el servidor',
+						'Algo salió mal, no se pudo crear el tópico',
+						500
+					);
+			} else {
+				idCategory.forEach(async idCat => {
+					topicCategory = await TopicCategory.create({
+						idCategory: idCat,
+						idTopic: topic.id,
+					});
+					if (!topicCategory)
+						throw new CustomError(
+							'Error en el servidor',
+							'Algo salió mal, no se pudo crear el tópico',
+							500
+						);
+				});
+			}
 			res.status(201).send({
 				success: true,
 				message: 'Tópico creado con éxito',
 			});
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	static async createTopicToCategory(req, res, next) {
+		try {
+			const { idCategory } = req.params;
+			const { name, description, image, idStatus } = req.body;
+			if (!name)
+				throw new CustomError(
+					'Entrada no válida',
+					'El nombre del tópico no puede estar vacío',
+					400
+				);
+			const topic = await Topic.create({
+				name,
+				description,
+				creationDate: new Date(),
+				image,
+				idStatus,
+			});
+			if (!topic)
+				throw new CustomError(
+					'Error en el servidor',
+					'Algo salió mal, no se pudo crear el tópico',
+					500
+				);
+			const topicCategory = await TopicCategory.create({
+				idCategory,
+				idTopic: topic.id,
+			});
+			if (!topicCategory)
+				throw new CustomError(
+					'Error en el servidor',
+					'Algo salió mal, no se pudo crear el tópico',
+					500
+				);
+			res
+				.status(201)
+				.send({ success: true, message: 'Tópico creado con éxito' });
 		} catch (err) {
 			next(err);
 		}

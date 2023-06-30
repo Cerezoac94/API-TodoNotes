@@ -9,6 +9,9 @@ Status.init(
 			type: Dt.STRING(50),
 			allowNull: false,
 		},
+		idUser: {
+			type: Dt.INTEGER,
+		},
 	},
 	{
 		sequelize: conn,
